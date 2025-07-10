@@ -1,47 +1,92 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import "./App.css";
 
-// PUBLIC_INTERFACE
+/**
+ * SNAKE GAME MAIN APP
+ * Layout: Scoreboard (top), game grid (center), controls (bottom)
+ * Visual theme: minimal, light, accent color #FFD600, primary #4CAF50, secondary #222222
+ * PUBLIC_INTERFACE
+ */
 function App() {
-  const [theme, setTheme] = useState('light');
+  // Prepare UI state (game and grid logic not yet implemented)
+  const [score, setScore] = useState(0);
+  const [status, setStatus] = useState("ready"); // ready | running | paused | gameover
 
-  // Effect to apply theme to document element
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
+  // The grid dimensions
+  const GRID_SIZE = 16; // 16x16
 
-  // PUBLIC_INTERFACE
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
-  };
+  // UI: Controls
+  function handleStart() {
+    setStatus("running");
+    // (Implement logic in next steps)
+  }
+  function handlePause() {
+    setStatus((prev) => (prev === "running" ? "paused" : prev));
+    // (Implement logic in next steps)
+  }
+  function handleRestart() {
+    setStatus("ready");
+    setScore(0);
+    // (Implement logic in next steps)
+  }
+
+  // Render empty cells for now
+  function renderGrid() {
+    const rows = [];
+    for (let y = 0; y < GRID_SIZE; y++) {
+      const cells = [];
+      for (let x = 0; x < GRID_SIZE; x++) {
+        cells.push(
+          <div key={x} className="snake-cell"></div>
+        );
+      }
+      rows.push(
+        <div key={y} className="snake-row">
+          {cells}
+        </div>
+      );
+    }
+    return rows;
+  }
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <button 
-          className="theme-toggle" 
-          onClick={toggleTheme}
-          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+    <div className="snake-root">
+      {/* Scoreboard */}
+      <div className="snake-scoreboard">
+        <div className="snake-title">🐍 SNAKE GAME</div>
+        <div className="snake-score">
+          Score: <span>{score}</span>
+        </div>
+        {status === "gameover" && (
+          <div className="snake-gameover">
+            <span>Game Over</span>
+          </div>
+        )}
+      </div>
+      {/* Game grid */}
+      <div className="snake-board-container">
+        <div className="snake-board">{renderGrid()}</div>
+      </div>
+      {/* Controls */}
+      <div className="snake-controls">
+        <button
+          className="snake-btn"
+          onClick={handleStart}
+          disabled={status === "running" || status === "gameover"}
         >
-          {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
+          Start
         </button>
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <p>
-          Current theme: <strong>{theme}</strong>
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          className="snake-btn"
+          onClick={handlePause}
+          disabled={status !== "running"}
         >
-          Learn React
-        </a>
-      </header>
+          Pause
+        </button>
+        <button className="snake-btn" onClick={handleRestart}>
+          Restart
+        </button>
+      </div>
     </div>
   );
 }
